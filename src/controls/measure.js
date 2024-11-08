@@ -22,6 +22,7 @@ const Measure = function Measure({
   useHectare = true,
   snap = false,
   snapIsActive = true,
+  queryable = false,
   snapLayers,
   snapRadius = 15
 } = {}) {
@@ -100,8 +101,8 @@ const Measure = function Measure({
     }
     if (
       tip
-    && geomType === 'Point'
-    && !modify.getOverlay().getSource().getFeatures().length
+      && geomType === 'Point'
+      && !modify.getOverlay().getSource().getFeatures().length
     ) {
       tipPoint = geometry;
       tipStyle.getText().setText(tip);
@@ -115,8 +116,13 @@ const Measure = function Measure({
     name: 'measure',
     title: 'Measure',
     source,
+    queryable,
     zIndex: 8,
     styleName: 'origoStylefunction',
+    attributes: [
+      { html: 'Length: {{@length(1)}}' },
+      { html: 'Area: {{@area(1)}}' }
+    ],
     style(feature) {
       return styleFunction(feature, showSegmentLabels);
     }
@@ -850,9 +856,7 @@ const Measure = function Measure({
 
         if (snap) {
           toggleSnapButton = Button({
-            cls: `o-measure-snap padding-small margin-bottom-smaller icon-smaller round light box-shadow hidden activ ${
-              snapActive && 'active'
-            }`,
+            cls: `o-measure-snap padding-small margin-bottom-smaller icon-smaller round light box-shadow hidden ${snapActive && 'active'}`,
             click() {
               toggleSnap();
             },
